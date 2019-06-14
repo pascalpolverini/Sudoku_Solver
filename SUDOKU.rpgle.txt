@@ -1,0 +1,823 @@
+        //                                                                                          
+        //   Sudoku Solver                                                                          
+        //   Author: Pascal Polverini - Fresche Solutions                                           
+        //                                                                                          
+                                                                                                    
+        // Compilation:                                                                             
+        //   CRTBNDRPG PGM(PASCAL/SUDOKU) SRCFILE(PASCAL/QRPGLESRC) SRCMBR(SUDOKU)                  
+        //   REPLACE(*YES) TGTRLS(V7R2M0)                                                           
+        //                                                                                          
+        //                                                                                          
+        // Execution:                                                                               
+        // ==> CALL SUDOKU: Display Puzzle                                                          
+        //     Press Enter: Dynamic I/O until resolution finished. (mode "topleft-botright")        
+        //     Press Enter: Display same Puzzle again                                               
+        //     Press Enter: Dynamic I/O until resolution finished. (mode "more intelligent")        
+        //     Press Enter: Exit.                                                                   
+        //                                                                                          
+                                                                                                    
+        ctl-opt DFTACTGRP(*NO)                                                                      
+                option(*nodebugio : *srcstmt : *nounref);                                           
+                                                                                                    
+        dcl-pr resetPuzzle;                                                                         
+        end-pr;                                                                                     
+                                                                                                    
+        dcl-pr resetCounterRowColSec;                                                               
+        end-pr;                                                                                     
+                                                                                                    
+        dcl-pr setPuzzle;                                                                           
+        end-pr;                                                                                     
+                                                                                                    
+        dcl-pr setMapping;                                                                          
+        end-pr;                                                                                     
+                                                                                                    
+        dcl-pr getDensity;                                                                          
+        end-pr;                                                                                     
+                                                                                                    
+        dcl-pr addSquareValue;                                                                      
+          x81i int(5);                                                                              
+          x81v packed(1);                                                                           
+        end-pr;                                                                                     
+                                                                                                    
+        dcl-pr resetSquareValue;                                                                    
+          x81i int(5);                                                                              
+        end-pr;                                                                                     
+                                                                                                    
+        dcl-pr getCandidateSquare ind;                                                              
+          nextPrev char(4);                                                                         
+          mode char(16);                                                                            
+          x81i int(5);                                                                              
+          x81v packed(1);                                                                           
+        end-pr;                                                                                     
+                                                                                                    
+        dcl-pr resolvePuzzle ind;                                                                   
+          mode char(16);                                                                            
+          invalidAttempt int(10);                                                                   
+        end-pr;                                                                                     
+                                                                                                    
+        dcl-pr checkPuzzle ind;                                                                     
+          x81v packed(1);                                                                           
+          x81i int(5);                                                                              
+        end-pr;                                                                                     
+                                                                                                    
+        dcl-f SUDOKUD    workstn                                                                    
+                         extdesc('PASCAL/SUDOKUD')                                                  
+                         extfile(*EXTDESC);                                                         
+                                                                                                    
+        dcl-ds colDS qualified;                                                                     
+            square packed(1) inz(0);                                                                
+        end-ds;                                                                                     
+                                                                                                    
+        dcl-ds row qualified dim(9);                                                                
+            col likeDS(colDS) dim(9);                                                               
+        end-ds;                                                                                     
+                                                                                                    
+        dcl-ds mapping qualified dim(81);                                                           
+            xrow int(5);                                                                            
+            xcol int(5);                                                                            
+            xsec int(5);                                                                            
+            xden int(5);                                                                            
+        end-ds;                                                                                     
+                                                                                                    
+        dcl-ds dspatrDS;                                                                            
+            p01  char(1);                                                                           
+            p02  char(1);                                                                           
+            p03  char(1);                                                                           
+            p04  char(1);                                                                           
+            p05  char(1);                                                                           
+            p06  char(1);                                                                           
+            p07  char(1);                                                                           
+            p08  char(1);                                                                           
+            p09  char(1);                                                                           
+            p10  char(1);                                                                           
+            p11  char(1);                                                                           
+            p12  char(1);                                                                           
+            p13  char(1);                                                                           
+            p14  char(1);                                                                           
+            p15  char(1);                                                                           
+            p16  char(1);                                                                           
+            p17  char(1);                                                                           
+            p18  char(1);                                                                           
+            p19  char(1);                                                                           
+            p20  char(1);                                                                           
+            p21  char(1);                                                                           
+            p22  char(1);                                                                           
+            p23  char(1);                                                                           
+            p24  char(1);                                                                           
+            p25  char(1);                                                                           
+            p26  char(1);                                                                           
+            p27  char(1);                                                                           
+            p28  char(1);                                                                           
+            p29  char(1);                                                                           
+            p30  char(1);                                                                           
+            p31  char(1);                                                                           
+            p32  char(1);                                                                           
+            p33  char(1);                                                                           
+            p34  char(1);                                                                           
+            p35  char(1);                                                                           
+            p36  char(1);                                                                           
+            p37  char(1);                                                                           
+            p38  char(1);                                                                           
+            p39  char(1);                                                                           
+            p40  char(1);                                                                           
+            p41  char(1);                                                                           
+            p42  char(1);                                                                           
+            p43  char(1);                                                                           
+            p44  char(1);                                                                           
+            p45  char(1);                                                                           
+            p46  char(1);                                                                           
+            p47  char(1);                                                                           
+            p48  char(1);                                                                           
+            p49  char(1);                                                                           
+            p50  char(1);                                                                           
+            p51  char(1);                                                                           
+            p52  char(1);                                                                           
+            p53  char(1);                                                                           
+            p54  char(1);                                                                           
+            p55  char(1);                                                                           
+            p56  char(1);                                                                           
+            p57  char(1);                                                                           
+            p58  char(1);                                                                           
+            p59  char(1);                                                                           
+            p60  char(1);                                                                           
+            p61  char(1);                                                                           
+            p62  char(1);                                                                           
+            p63  char(1);                                                                           
+            p64  char(1);                                                                           
+            p65  char(1);                                                                           
+            p66  char(1);                                                                           
+            p67  char(1);                                                                           
+            p68  char(1);                                                                           
+            p69  char(1);                                                                           
+            p70  char(1);                                                                           
+            p71  char(1);                                                                           
+            p72  char(1);                                                                           
+            p73  char(1);                                                                           
+            p74  char(1);                                                                           
+            p75  char(1);                                                                           
+            p76  char(1);                                                                           
+            p77  char(1);                                                                           
+            p78  char(1);                                                                           
+            p79  char(1);                                                                           
+            p80  char(1);                                                                           
+            p81  char(1);                                                                           
+          dspatr char(1) dim(81) pos(1);                                                            
+        end-ds;                                                                                     
+                                                                                                    
+        // 9 columns                                                                                
+        dcl-s xcol int(5) dim(9);                                                                   
+                                                                                                    
+        // 9 rows                                                                                   
+        dcl-s xrow int(5) dim(9);                                                                   
+                                                                                                    
+        // 9 sections of 3x3 squares in Z order                                                     
+        //   1.. 2.. 3..                                                                            
+        //   1.. 2.. 3..                                                                            
+        //   1.. 2.. 3..                                                                            
+        //   4.. 5.. 6..                                                                            
+        //   ... ... ...                                                                            
+        //   7.. 8.. 9..                                                                            
+        dcl-s xsec int(5) dim(9);                                                                   
+                                                                                                    
+        // all in flat                                                                              
+        dcl-s x81  packed(1) dim(81);                                                               
+                                                                                                    
+        // index                                                                                    
+        dcl-s x81i int(5);                                                                          
+                                                                                                    
+        // Array to set current square in process (as "candidate" square)                           
+        // It is used as well to remember last square used if the current fails with any combination
+        // - current square fails with any combination means we tried with all [1-9]                
+        //   In this case I have to go back to last square I used and need to know all              
+        //      combinations used for it in order to try another one.                               
+        // - Good news is that I dont need to memorise all combination made per square:             
+        //   --> I always increment by 1 any new tentative then:                                    
+        //       Current square failure is when value = 9 and it doesnt work                        
+        //       I just need to know what was last square used and retry with +1 on it.             
+        //       (if last square is already = 9 then go back to previous square and so on)          
+        //       Anytime we go backward reset current square with 0.                                
+        dcl-s candidateSeq int(5) dim(81);                                                          
+                                                                                                    
+        dcl-s i int(5);                                                                             
+        dcl-s j int(5);                                                                             
+        dcl-s c int(5); // variable used as exclusive index for candidateSeq()                      
+        dcl-s resolved ind;                                                                         
+        dcl-s mode char(16);                                                                        
+        dcl-s invalidAttempt int(10);                                                               
+                                                                                                    
+        //--------------------------------------------------------------------//                    
+        // Main Process                                                       //                    
+        //--------------------------------------------------------------------//                    
+                                                                                                    
+        // Initialise all mapping & indexes to work with Sudoku                                     
+        setMapping();                                                                               
+                                                                                                    
+        // Resolve Sudoku puzzle:                                                                   
+        // Press ENTER:                                                                             
+        // --> Try square from left-top to bottom right: mode = 'topleft-botright';                 
+        // Press ENTER again:                                                                       
+        // --> Try square in the most dense area       : mode = 'more intelligent';                 
+        //                                                                                          
+        // In both mode the process, per square, is as follow:                                      
+        //  The current square start to be empty with value 0                                       
+        //  Try with value +1                                                                       
+        //  Check all 3 dimension col/row/sec [1-9]                                                 
+        //  if OK ------> go next (use candidateSeq() to find next square)                          
+        //     not OK --> try again with +1                                                         
+        //     not OK and = 9 --> set current to 0                                                  
+        //                        use candidateSeq() to find last square used                       
+        //                        try again with +1                                                 
+        //                                                                                          
+                                                                                                    
+        setPuzzle();                                                                                
+        mode = 'topleft-botright';                                                                  
+        resolved = resolvePuzzle(mode : invalidAttempt);                                            
+                                                                                                    
+        setPuzzle();                                                                                
+        mode = 'more intelligent';                                                                  
+        resolved = resolvePuzzle(mode : invalidAttempt);                                            
+                                                                                                    
+                                                                                                    
+        *inlr = *on;                                                                                
+                                                                                                    
+        //--------------------------------------------------------------------//                    
+        // Procedures                                                         //                    
+        //--------------------------------------------------------------------//                    
+        dcl-proc setMapping;                                                                        
+        // Set mapping index: xcol:123456789  xrow:111111111  xsec:111222333                        
+        // using Math              123456789       222222222       111222333                        
+        //                         123456789       333333333       111222333                        
+        //                         123456789       444444444       444555666                        
+        //                         ...             ...             ...                              
+                                                                                                    
+        dcl-pi *n;                                                                                  
+         end-pi;                                                                                    
+         dcl-s div  int(5);                                                                         
+         dcl-s rem  int(5);                                                                         
+         dcl-s divr int(5);                                                                         
+         dcl-s remr int(5);                                                                         
+         dcl-s r    int(5);                                                                         
+         dcl-s c    int(5);                                                                         
+                                                                                                    
+         for i = 1 to 81;                                                                           
+           div = %div(i:9);                                                                         
+           rem = %rem(i:9);                                                                         
+           if rem > 0;                                                                              
+              rem = 1;                                                                              
+           endif;                                                                                   
+           mapping(i).xrow = div + rem;                                                             
+                                                                                                    
+           c = i;                                                                                   
+           dow c > 9;                                                                               
+               c -= 9;                                                                              
+           enddo;                                                                                   
+           mapping(i).xcol = c;                                                                     
+                                                                                                    
+           div = %div(mapping(i).xcol:3);                                                           
+           rem = %rem(mapping(i).xcol:3);                                                           
+           if rem > 0;                                                                              
+              rem = 1;                                                                              
+           endif;                                                                                   
+           divr = %div(mapping(i).xrow:3);                                                          
+           remr = %rem(mapping(i).xrow:3);                                                          
+           if remr > 0;                                                                             
+              remr = 1;                                                                             
+           endif;                                                                                   
+           c = div +rem ;                                                                           
+           r = divr+remr;                                                                           
+           mapping(i).xsec = c + r*2-(3-r);                                                         
+         endfor;                                                                                    
+         return;                                                                                    
+        end-proc;                                                                                   
+                                                                                                    
+        dcl-proc resetPuzzle;                                                                       
+         dcl-pi *n;                                                                                 
+         end-pi;                                                                                    
+         for i = 1 to 9;                                                                            
+           for j = 1 to 9;                                                                          
+               row(i).col(j).square = 0;                                                            
+           endfor;                                                                                  
+         endfor;                                                                                    
+         return;                                                                                    
+        end-proc;                                                                                   
+                                                                                                    
+        dcl-proc resetCounterRowColSec;  // Used before calling getDensity()                        
+         dcl-pi *n;                                                                                 
+         end-pi;                                                                                    
+         for i = 1 to 9;                                                                            
+           xrow(i) = 0;                                                                             
+           xcol(i) = 0;                                                                             
+           xsec(i) = 0;                                                                             
+         endfor;                                                                                    
+         return;                                                                                    
+        end-proc;                                                                                   
+                                                                                                    
+        dcl-proc addSquareValue;                                                                    
+         dcl-pi *n;                                                                                 
+           x81i int(5);      // coordinate                                                          
+           x81v packed(1);   // value                                                               
+         end-pi;                                                                                    
+         dcl-s xr  packed(1);                                                                       
+         dcl-s xc  packed(1);                                                                       
+         x81(x81i) = x81v;                                                                          
+         xr = mapping(x81i).xrow;                                                                   
+         xc = mapping(x81i).xcol;                                                                   
+         row(xr).col(xc).square = x81(x81i);                                                        
+         return;                                                                                    
+        end-proc;                                                                                   
+                                                                                                    
+        dcl-proc resetSquareValue;                                                                  
+         dcl-pi *n;                                                                                 
+           x81i int(5);      // coordinate                                                          
+         end-pi;                                                                                    
+         dcl-s xr  packed(1);                                                                       
+         dcl-s xc  packed(1);                                                                       
+         x81(x81i) = 0;                                                                             
+         xr = mapping(x81i).xrow;                                                                   
+         xc = mapping(x81i).xcol;                                                                   
+         row(xr).col(xc).square = x81(x81i);                                                        
+         return;                                                                                    
+        end-proc;                                                                                   
+                                                                                                    
+        // Set the Sudoku puzzle.                                                                   
+        dcl-proc setPuzzle;                                                                         
+         dcl-pi *n;                                                                                 
+         end-pi;                                                                                    
+         dcl-s a81 char(81);                                                                        
+         dcl-s xr  packed(1);                                                                       
+         dcl-s xc  packed(1);                                                                       
+                                                                                                    
+         // reset puzzle                                                                            
+         resetPuzzle();                                                                             
+                                                                                                    
+         // Generate Sudoku puzzle samples: https://qqwing.com/generate.html                        
+         // expert sudoku example                                                                   
+         a81 = '1000006908350002000020000080000109000072'                                           
+             + '00000000007015000008000350000009080900307';                                         
+         // simple sudoku example                                                                   
+         a81 = '9030560004000000005000870320650004908000'                                           
+             + '00000000000763309000020000000805087000000';                                         
+                                                                                                    
+        for i = 1 to 81;                                                                            
+         x81(i) = %dec(%subst(a81:i:1):1:0);                                                        
+         xr = mapping(i).xrow;                                                                      
+         xc = mapping(i).xcol;                                                                      
+         row(xr).col(xc).square = x81(i);                                                           
+                                                                                                    
+         // For *ind DDS COLOR(WHT)                                                                 
+         if x81(i) > 0;                                                                             
+            dspatr(i) = x'22';  // wht                                                              
+         else;                                                                                      
+            dspatr(i) = x'20';  // normal                                                           
+         endif;                                                                                     
+        endfor;                                                                                     
+                                                                                                    
+        return;                                                                                     
+        end-proc;                                                                                   
+                                                                                                    
+        // Get density area                                                                         
+        // This is to get where is the candidate square more easier to resolve.                     
+        // --> where we would "more intelligently" start & continue.                                
+        dcl-proc getDensity;                                                                        
+         dcl-pi *n;                                                                                 
+         end-pi;                                                                                    
+                                                                                                    
+        // reset xrow/col/sec                                                                       
+        resetCounterRowColSec();                                                                    
+                                                                                                    
+        for i = 1 to 9;                                                                             
+          for j = 1 to 9;                                                                           
+              if row(i).col(j).square > 0;                                                          
+                 xrow(i) += 1;                                                                      
+                 xcol(j) += 1;                                                                      
+                 if     i >= 1 and i <= 3;                                                          
+                    if     j >= 1 and j <= 3;                                                       
+                       xsec(1) += 1;                                                                
+                    elseif j >= 4 and j <= 6;                                                       
+                       xsec(2) += 1;                                                                
+                    elseif j >= 7 and j <= 9;                                                       
+                       xsec(3) += 1;                                                                
+                    endif;                                                                          
+                 elseif i >= 4 and i <= 6;                                                          
+                    if     j >= 1 and j <= 3;                                                       
+                       xsec(4) += 1;                                                                
+                    elseif j >= 4 and j <= 6;                                                       
+                       xsec(5) += 1;                                                                
+                    elseif j >= 7 and j <= 9;                                                       
+                       xsec(6) += 1;                                                                
+                    endif;                                                                          
+                 elseif i >= 7 and i <= 9;                                                          
+                    if     j >= 1 and j <= 3;                                                       
+                       xsec(7) += 1;                                                                
+                    elseif j >= 4 and j <= 6;                                                       
+                       xsec(8) += 1;                                                                
+                    elseif j >= 7 and j <= 9;                                                       
+                       xsec(9) += 1;                                                                
+                    endif;                                                                          
+                 endif;                                                                             
+              endif;                                                                                
+          endfor;                                                                                   
+        endfor;                                                                                     
+        return;                                                                                     
+        end-proc;                                                                                   
+                                                                                                    
+        // Candidate Square                                                                         
+        dcl-proc getCandidateSquare;                                                                
+         dcl-pi *n ind;      // return *on if candidate available                                   
+           nextPrev char(4); // next, prev                                                          
+           mode char(16);    // topleft-botright, more intelligent                                  
+           x81i int(5);      // return coordinate                                                   
+           x81v packed(1);   // return value (always = 0 if next)                                   
+         end-pi;                                                                                    
+         dcl-s moreDense int(5);                                                                    
+                                                                                                    
+         x81i = 0;                                                                                  
+         if nextPrev = 'next';                                                                      
+            // candidate from top-left to bottom-right                                              
+            if mode = 'topleft-botright';                                                           
+               for i = 1 to 81;                                                                     
+                   if x81(i) = 0;                                                                   
+                      x81i = i;                                                                     
+                      leave;                                                                        
+                   endif;                                                                           
+               endfor;                                                                              
+            endif;                                                                                  
+                                                                                                    
+            // candidate the more dense row/col/sec                                                 
+            if mode = 'more intelligent';                                                           
+               getDensity();                                                                        
+               moreDense = 0;                                                                       
+               for i = 1 to 81;                                                                     
+                   if x81(i) = 0;                                                                   
+                      mapping(i).xden = xrow(mapping(i).xrow)                                       
+                                      + xcol(mapping(i).xcol)                                       
+                                      + xsec(mapping(i).xsec);                                      
+                      if mapping(i).xden > moreDense;                                               
+                         moreDense = mapping(i).xden;                                               
+                         x81i = i;                                                                  
+                      endif;                                                                        
+                   endif;                                                                           
+               endfor;                                                                              
+            endif;                                                                                  
+            c +=1;                                                                                  
+            candidateSeq(c) = x81i;                                                                 
+         endif;                                                                                     
+                                                                                                    
+         if nextPrev = 'prev';                                                                      
+            resetSquareValue(candidateSeq(c));                                                      
+            candidateSeq(c) = 0;                                                                    
+            c -=1;                                                                                  
+            if c > 0;                                                                               
+               x81i = candidateSeq(c);                                                              
+            endif;                                                                                  
+         endif;                                                                                     
+                                                                                                    
+         if x81i > 0;                                                                               
+            x81v = x81(x81i);                                                                       
+            return *on;                                                                             
+         else;                                                                                      
+            x81v = 0;                                                                               
+            return *off;                                                                            
+         endif;                                                                                     
+        end-proc;                                                                                   
+                                                                                                    
+        // Check Puzzle                                                                             
+        dcl-proc checkPuzzle;                                                                       
+         dcl-pi *n ind;      // return *on if OK, *off if not OK                                    
+           x81v packed(1);   // value to check                                                      
+           x81i int(5);      // coordinate of value                                                 
+         end-pi;                                                                                    
+         dcl-s row  int(5);                                                                         
+         dcl-s col  int(5);                                                                         
+         dcl-s sec  int(5);                                                                         
+                                                                                                    
+         row = mapping(x81i).xrow;                                                                  
+         col = mapping(x81i).xcol;                                                                  
+         sec = mapping(x81i).xsec;                                                                  
+                                                                                                    
+         // check if value [1-9] isnt already there                                                 
+         // use i j axes for row and col                                                            
+         // use mapping looping for row, colum and 3x3 section                                      
+         for i = 1 to 81;                                                                           
+           if mapping(i).xrow = row                                                                 
+           or mapping(i).xcol = col                                                                 
+           or mapping(i).xsec = sec;                                                                
+              if x81(i) = x81v;                                                                     
+                 return *off;                                                                       
+              endif;                                                                                
+           endif;                                                                                   
+         endfor;                                                                                    
+                                                                                                    
+         return *on;                                                                                
+        end-proc;                                                                                   
+                                                                                                    
+        // Resolve puzzle                                                                           
+        dcl-proc resolvePuzzle;                                                                     
+         dcl-pi *n ind;             // return *on if OK, *off if not OK                             
+           mode char(16);           // topleft-botright, intelligent, random                        
+           invalidAttempt int(10);  // return number of invalid attempts                            
+         end-pi;                                                                                    
+                                                                                                    
+         dcl-s candidateAvailable ind;                                                              
+         dcl-s nextPrev   char(4);                                                                  
+         dcl-s x81i       int(5);                                                                   
+         dcl-s ini_v      packed(1);                                                                
+         dcl-s vi         int(5);                                                                   
+         dcl-s v          packed(1);                                                                
+         dcl-s valid_v    ind;                                                                      
+         dcl-s x81v       packed(1);                                                                
+         dcl-s start_time timestamp;                                                                
+         dcl-s time_taken int(10);                                                                  
+         dcl-s hour       int(5);                                                                   
+         dcl-s min        int(5);                                                                   
+         dcl-s sec        int(5);                                                                   
+         dcl-s sec2       char(2);                                                                  
+         dcl-s min2       char(2);                                                                  
+         dcl-s charTime   char(30);                                                                 
+                                                                                                    
+         // Reset all pointers                                                                      
+         x81i = 0;                                                                                  
+         i = 0;                                                                                     
+         j = 0;                                                                                     
+         c = 0;                                                                                     
+         invalidAttempt = 0;                                                                        
+                                                                                                    
+         // Measure timing (used in setScreen)                                                      
+         hour = 0;                                                                                  
+         min  = 0;                                                                                  
+         sec  = 0;                                                                                  
+         charTime = ' ';                                                                            
+         start_time = %timestamp();                                                                 
+         exsr setScreen;                                                                            
+         if mode = 'topleft-botright';                                                              
+            write FORM1;  // 'write' cleans background screen                                       
+            EXFMT FORM1;                                                                            
+         else;                                                                                      
+            write FORM2;  // 'write' cleans background screen                                       
+            EXFMT FORM2;                                                                            
+         endif;                                                                                     
+                                                                                                    
+         // Measure timing - reset                                                                  
+         hour = 0;                                                                                  
+         min  = 0;                                                                                  
+         sec  = 0;                                                                                  
+         charTime = ' ';                                                                            
+         start_time = %timestamp();                                                                 
+                                                                                                    
+         nextPrev = 'next';                                                                         
+         candidateAvailable = getCandidateSquare(nextPrev:mode:x81i:x81v);                          
+                                                                                                    
+         // Dynamic I/O display until the puzzle is fully solved.                                   
+         // - display each new square outcome.                                                      
+         // - add statistic and timing.                                                             
+         dow candidateAvailable;                                                                    
+             // if prev, show invalid in screen                                                     
+             if nextPrev = 'prev';                                                                  
+                 dspatr(x81i) = x'28';  // red                                                      
+                 if mode = 'topleft-botright';                                                      
+                    BACK1 +=1;                                                                      
+                    WRITE FORM1;                                                                    
+                 else;                                                                              
+                    BACK2 +=1;                                                                      
+                    WRITE FORM2;                                                                    
+                 endif;                                                                             
+                 dspatr(x81i) = x'20';  // normal                                                   
+             endif;                                                                                 
+                                                                                                    
+             if x81v +1 <= 9;                                                                       
+                ini_v = x81v +1;                                                                    
+             else;                                                                                  
+                ini_v = x81v;                                                                       
+             endif;                                                                                 
+             for vi = ini_v to 9;                                                                   
+                 v = vi;                                                                            
+                 valid_v = checkPuzzle(v : x81i);                                                   
+                 if valid_v;                                                                        
+                    addSquareValue(x81i : v);                                                       
+                    exsr setScreen;                                                                 
+                    if mode = 'topleft-botright';                                                   
+                       WRITE FORM1;                                                                 
+                    else;                                                                           
+                       WRITE FORM2;                                                                 
+                    endif;                                                                          
+                    leave;                                                                          
+                 else;                                                                              
+                    invalidAttempt +=1;                                                             
+                 endif;                                                                             
+             endfor;                                                                                
+             nextPrev = 'next';                                                                     
+             if not valid_v;                                                                        
+                nextPrev = 'prev';                                                                  
+             endif;                                                                                 
+             candidateAvailable = getCandidateSquare(nextPrev:mode:x81i:x81v);                      
+         enddo;                                                                                     
+                                                                                                    
+         exsr setScreen;                                                                            
+         if mode = 'topleft-botright';                                                              
+            EXFMT FORM1;                                                                            
+         else;                                                                                      
+            EXFMT FORM2;                                                                            
+         endif;                                                                                     
+         return valid_v;                                                                            
+                                                                                                    
+         begsr setScreen;                                                                           
+         exsr setTiming;                                                                            
+         if mode = 'topleft-botright';                                                              
+            S1 = x81(1);                                                                            
+            S2 = x81(2);                                                                            
+            S3 = x81(3);                                                                            
+            S4 = x81(4);                                                                            
+            S5 = x81(5);                                                                            
+            S6 = x81(6);                                                                            
+            S7 = x81(7);                                                                            
+            S8 = x81(8);                                                                            
+            S9 = x81(9);                                                                            
+            S10= x81(10);                                                                           
+            S11 = x81(11);                                                                          
+            S12 = x81(12);                                                                          
+            S13 = x81(13);                                                                          
+            S14 = x81(14);                                                                          
+            S15 = x81(15);                                                                          
+            S16 = x81(16);                                                                          
+            S17 = x81(17);                                                                          
+            S18 = x81(18);                                                                          
+            S19 = x81(19);                                                                          
+            S20 = x81(20);                                                                          
+            S21 = x81(21);                                                                          
+            S22 = x81(22);                                                                          
+            S23 = x81(23);                                                                          
+            S24 = x81(24);                                                                          
+            S25 = x81(25);                                                                          
+            S26 = x81(26);                                                                          
+            S27 = x81(27);                                                                          
+            S28 = x81(28);                                                                          
+            S29 = x81(29);                                                                          
+            S30 = x81(30);                                                                          
+            S31 = x81(31);                                                                          
+            S32 = x81(32);                                                                          
+            S33 = x81(33);                                                                          
+            S34 = x81(34);                                                                          
+            S35 = x81(35);                                                                          
+            S36 = x81(36);                                                                          
+            S37 = x81(37);                                                                          
+            S38 = x81(38);                                                                          
+            S39 = x81(39);                                                                          
+            S40 = x81(40);                                                                          
+            S41 = x81(41);                                                                          
+            S42 = x81(42);                                                                          
+            S43 = x81(43);                                                                          
+            S44 = x81(44);                                                                          
+            S45 = x81(45);                                                                          
+            S46 = x81(46);                                                                          
+            S47 = x81(47);                                                                          
+            S48 = x81(48);                                                                          
+            S49 = x81(49);                                                                          
+            S50 = x81(50);                                                                          
+            S51 = x81(51);                                                                          
+            S52 = x81(52);                                                                          
+            S53 = x81(53);                                                                          
+            S54 = x81(54);                                                                          
+            S55 = x81(55);                                                                          
+            S56 = x81(56);                                                                          
+            S57 = x81(57);                                                                          
+            S58 = x81(58);                                                                          
+            S59 = x81(59);                                                                          
+            S60 = x81(60);                                                                          
+            S61 = x81(61);                                                                          
+            S62 = x81(62);                                                                          
+            S63 = x81(63);                                                                          
+            S64 = x81(64);                                                                          
+            S65 = x81(65);                                                                          
+            S66 = x81(66);                                                                          
+            S67 = x81(67);                                                                          
+            S68 = x81(68);                                                                          
+            S69 = x81(69);                                                                          
+            S70 = x81(70);                                                                          
+            S71 = x81(71);                                                                          
+            S72 = x81(72);                                                                          
+            S73 = x81(73);                                                                          
+            S74 = x81(74);                                                                          
+            S75 = x81(75);                                                                          
+            S76 = x81(76);                                                                          
+            S77 = x81(77);                                                                          
+            S78 = x81(78);                                                                          
+            S79 = x81(79);                                                                          
+            S80 = x81(80);                                                                          
+            S81 = x81(81);                                                                          
+            MODE1= mode;                                                                            
+            INVA1= invalidAttempt;                                                                  
+            CUR1 = x81i;                                                                            
+                                                                                                    
+            evalr TIME1 = %trimr(charTime);                                                         
+         else;                                                                                      
+            T1 = x81(1);                                                                            
+            T2 = x81(2);                                                                            
+            T3 = x81(3);                                                                            
+            T4 = x81(4);                                                                            
+            T5 = x81(5);                                                                            
+            T6 = x81(6);                                                                            
+            T7 = x81(7);                                                                            
+            T8 = x81(8);                                                                            
+            T9 = x81(9);                                                                            
+            T10= x81(10);                                                                           
+            T11 = x81(11);                                                                          
+            T12 = x81(12);                                                                          
+            T13 = x81(13);                                                                          
+            T14 = x81(14);                                                                          
+            T15 = x81(15);                                                                          
+            T16 = x81(16);                                                                          
+            T17 = x81(17);                                                                          
+            T18 = x81(18);                                                                          
+            T19 = x81(19);                                                                          
+            T20 = x81(20);                                                                          
+            T21 = x81(21);                                                                          
+            T22 = x81(22);                                                                          
+            T23 = x81(23);                                                                          
+            T24 = x81(24);                                                                          
+            T25 = x81(25);                                                                          
+            T26 = x81(26);                                                                          
+            T27 = x81(27);                                                                          
+            T28 = x81(28);                                                                          
+            T29 = x81(29);                                                                          
+            T30 = x81(30);                                                                          
+            T31 = x81(31);                                                                          
+            T32 = x81(32);                                                                          
+            T33 = x81(33);                                                                          
+            T34 = x81(34);                                                                          
+            T35 = x81(35);                                                                          
+            T36 = x81(36);                                                                          
+            T37 = x81(37);                                                                          
+            T38 = x81(38);                                                                          
+            T39 = x81(39);                                                                          
+            T40 = x81(40);                                                                          
+            T41 = x81(41);                                                                          
+            T42 = x81(42);                                                                          
+            T43 = x81(43);                                                                          
+            T44 = x81(44);                                                                          
+            T45 = x81(45);                                                                          
+            T46 = x81(46);                                                                          
+            T47 = x81(47);                                                                          
+            T48 = x81(48);                                                                          
+            T49 = x81(49);                                                                          
+            T50 = x81(50);                                                                          
+            T51 = x81(51);                                                                          
+            T52 = x81(52);                                                                          
+            T53 = x81(53);                                                                          
+            T54 = x81(54);                                                                          
+            T55 = x81(55);                                                                          
+            T56 = x81(56);                                                                          
+            T57 = x81(57);                                                                          
+            T58 = x81(58);                                                                          
+            T59 = x81(59);                                                                          
+            T60 = x81(60);                                                                          
+            T61 = x81(61);                                                                          
+            T62 = x81(62);                                                                          
+            T63 = x81(63);                                                                          
+            T64 = x81(64);                                                                          
+            T65 = x81(65);                                                                          
+            T66 = x81(66);                                                                          
+            T67 = x81(67);                                                                          
+            T68 = x81(68);                                                                          
+            T69 = x81(69);                                                                          
+            T70 = x81(70);                                                                          
+            T71 = x81(71);                                                                          
+            T72 = x81(72);                                                                          
+            T73 = x81(73);                                                                          
+            T74 = x81(74);                                                                          
+            T75 = x81(75);                                                                          
+            T76 = x81(76);                                                                          
+            T77 = x81(77);                                                                          
+            T78 = x81(78);                                                                          
+            T79 = x81(79);                                                                          
+            T80 = x81(80);                                                                          
+            T81 = x81(81);                                                                          
+            MODE2= mode;                                                                            
+            INVA2= invalidAttempt;                                                                  
+            CUR2 = x81i;                                                                            
+            evalr TIME2 = %trimr(charTime);                                                         
+         endif;                                                                                     
+         endsr;                                                                                     
+                                                                                                    
+         begsr setTiming;                                                                           
+         time_taken = %DIFF (%timestamp() : start_time: *SECONDS);                                  
+         if time_taken > 0;                                                                         
+         evalr sec2 = %trimr(%char(time_taken));                                                    
+         charTime = sec2+'sec';                                                                     
+         endif;                                                                                     
+         if time_taken > 59;                                                                        
+            min = %div(time_taken:60);                                                              
+            evalr min2 = %trimr(%char(min));                                                        
+            sec = %rem(time_taken:60);                                                              
+            evalr sec2 = %trimr(%char(sec));                                                        
+            charTime = min2+'min '+sec2+'sec';                                                      
+            if min > 59;                                                                            
+               hour = %div(min:60);                                                                 
+               min  = %rem(min:60);                                                                 
+               evalr min2 = %trimr(%char(min));                                                     
+               charTime = %char(hour)+'hours '                                                      
+                        + min2+'min '+sec2+'sec';                                                   
+            endif;                                                                                  
+         endif;                                                                                     
+         endsr;                                                                                     
+        end-proc;                                                                                   
+                                                                                                     

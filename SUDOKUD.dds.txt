@@ -1,0 +1,840 @@
+      *
+      * Sudoku Solver
+      * Author: Pascal Polverini - Fresche Solutions
+      *
+      *
+      * Compilation:
+      *  CRTDSPF FILE(PASCAL/SUDOKUD)
+      *          SRCFILE(PASCAL/QDDSSRC)
+      *          SRCMBR(SUDOKUD)
+      *          REPLACE(*YES)
+      *
+     A*%%TS  SD  20180418  065233  PASCALP     REL-V7R2M0  5770-WDS
+     A*%%EC
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      INDARA
+     A          R FORM1
+     A*%%TS  SD  20180418  065233  PASCALP     REL-V7R2M0  5770-WDS
+     A                                      OVERLAY
+     A                                      TEXT('DYNAMIC I/O')
+     A                                  1  2' '
+     A                                  8 32'SUDOKU'
+     A                                      COLOR(WHT)
+     A                                  2  4']¯¯¯¯¯¯¯]¯¯¯¯¯¯¯]¯¯¯¯¯¯¯]'
+     A                                  3  4']'
+     A                                  3 12']'
+     A                                  3 20']'
+     A                                  3 28']'
+     A                                  4  4']'
+     A                                  4 12']'
+     A                                  4 20']'
+     A                                  4 28']'
+     A                                  5  4']'
+     A                                  5 12']'
+     A                                  5 20']'
+     A                                  5 28']'
+     A                                  6  4']-------+-------+-------]'
+     A                                  7  4']'
+     A                                  7 12']'
+     A                                  7 20']'
+     A                                  7 28']'
+     A                                  8  4']'
+     A                                  8 12']'
+     A                                  8 20']'
+     A                                  8 28']'
+     A                                  9  4']'
+     A                                  9 12']'
+     A                                  9 20']'
+     A                                  9 28']'
+     A                                 10  4']-------+-------+-------]'
+     A                                 11  4']'
+     A                                 11 12']'
+     A                                 11 20']'
+     A                                 11 28']'
+     A                                 12  4']'
+     A                                 12 12']'
+     A                                 12 20']'
+     A                                 12 28']'
+     A                                 13  4']'
+     A                                 13 12']'
+     A                                 13 20']'
+     A                                 13 28']'
+     A                                 14  4']_______]_______]_______]'
+     A            S1             1Y 0O  3  6EDTCDE(4)
+     A                                      DSPATR(&P01)
+     A            S2             1Y 0O  3  8EDTCDE(4)
+     A                                      DSPATR(&P02)
+     A            S3             1Y 0O  3 10EDTCDE(4)
+     A                                      DSPATR(&P03)
+     A            S4             1Y 0O  3 14EDTCDE(4)
+     A                                      DSPATR(&P04)
+     A            S5             1Y 0O  3 16EDTCDE(4)
+     A                                      DSPATR(&P05)
+     A            S6             1Y 0O  3 18EDTCDE(4)
+     A                                      DSPATR(&P06)
+     A            S7             1Y 0O  3 22EDTCDE(4)
+     A                                      DSPATR(&P07)
+     A            S8             1Y 0O  3 24EDTCDE(4)
+     A                                      DSPATR(&P08)
+     A            S9             1Y 0O  3 26EDTCDE(4)
+     A                                      DSPATR(&P09)
+     A            S10            1Y 0O  4  6EDTCDE(4)
+     A                                      DSPATR(&P10)
+     A            S11            1Y 0O  4  8EDTCDE(4)
+     A                                      DSPATR(&P11)
+     A            S12            1Y 0O  4 10EDTCDE(4)
+     A                                      DSPATR(&P12)
+     A            S13            1Y 0O  4 14EDTCDE(4)
+     A                                      DSPATR(&P13)
+     A            S14            1Y 0O  4 16EDTCDE(4)
+     A                                      DSPATR(&P14)
+     A            S15            1Y 0O  4 18EDTCDE(4)
+     A                                      DSPATR(&P15)
+     A            S16            1Y 0O  4 22EDTCDE(4)
+     A                                      DSPATR(&P16)
+     A            S17            1Y 0O  4 24EDTCDE(4)
+     A                                      DSPATR(&P17)
+     A            S18            1Y 0O  4 26EDTCDE(4)
+     A                                      DSPATR(&P18)
+     A            S19            1Y 0O  5  6EDTCDE(4)
+     A                                      DSPATR(&P19)
+     A            S20            1Y 0O  5  8EDTCDE(4)
+     A                                      DSPATR(&P20)
+     A            S21            1Y 0O  5 10EDTCDE(4)
+     A                                      DSPATR(&P21)
+     A            S22            1Y 0O  5 14EDTCDE(4)
+     A                                      DSPATR(&P22)
+     A            S23            1Y 0O  5 16EDTCDE(4)
+     A                                      DSPATR(&P23)
+     A            S24            1Y 0O  5 18EDTCDE(4)
+     A                                      DSPATR(&P24)
+     A            S25            1Y 0O  5 22EDTCDE(4)
+     A                                      DSPATR(&P25)
+     A            S26            1Y 0O  5 24EDTCDE(4)
+     A                                      DSPATR(&P26)
+     A            S27            1Y 0O  5 26EDTCDE(4)
+     A                                      DSPATR(&P27)
+     A            S28            1Y 0O  7  6EDTCDE(4)
+     A                                      DSPATR(&P28)
+     A            S29            1Y 0O  7  8EDTCDE(4)
+     A                                      DSPATR(&P29)
+     A            S30            1Y 0O  7 10EDTCDE(4)
+     A                                      DSPATR(&P30)
+     A            S31            1Y 0O  7 14EDTCDE(4)
+     A                                      DSPATR(&P31)
+     A            S32            1Y 0O  7 16EDTCDE(4)
+     A                                      DSPATR(&P32)
+     A            S33            1Y 0O  7 18EDTCDE(4)
+     A                                      DSPATR(&P33)
+     A            S34            1Y 0O  7 22EDTCDE(4)
+     A                                      DSPATR(&P34)
+     A            S35            1Y 0O  7 24EDTCDE(4)
+     A                                      DSPATR(&P35)
+     A            S36            1Y 0O  7 26EDTCDE(4)
+     A                                      DSPATR(&P36)
+     A            S37            1Y 0O  8  6EDTCDE(4)
+     A                                      DSPATR(&P37)
+     A            S38            1Y 0O  8  8EDTCDE(4)
+     A                                      DSPATR(&P38)
+     A            S39            1Y 0O  8 10EDTCDE(4)
+     A                                      DSPATR(&P39)
+     A            S40            1Y 0O  8 14EDTCDE(4)
+     A                                      DSPATR(&P40)
+     A            S41            1Y 0O  8 16EDTCDE(4)
+     A                                      DSPATR(&P41)
+     A            S42            1Y 0O  8 18EDTCDE(4)
+     A                                      DSPATR(&P42)
+     A            S43            1Y 0O  8 22EDTCDE(4)
+     A                                      DSPATR(&P43)
+     A            S44            1Y 0O  8 24EDTCDE(4)
+     A                                      DSPATR(&P44)
+     A            S45            1Y 0O  8 26EDTCDE(4)
+     A                                      DSPATR(&P45)
+     A            S46            1Y 0O  9  6EDTCDE(4)
+     A                                      DSPATR(&P46)
+     A            S47            1Y 0O  9  8EDTCDE(4)
+     A                                      DSPATR(&P47)
+     A            S48            1Y 0O  9 10EDTCDE(4)
+     A                                      DSPATR(&P48)
+     A            S49            1Y 0O  9 14EDTCDE(4)
+     A                                      DSPATR(&P49)
+     A            S50            1Y 0O  9 16EDTCDE(4)
+     A                                      DSPATR(&P50)
+     A            S51            1Y 0O  9 18EDTCDE(4)
+     A                                      DSPATR(&P51)
+     A            S52            1Y 0O  9 22EDTCDE(4)
+     A                                      DSPATR(&P52)
+     A            S53            1Y 0O  9 24EDTCDE(4)
+     A                                      DSPATR(&P53)
+     A            S54            1Y 0O  9 26EDTCDE(4)
+     A                                      DSPATR(&P54)
+     A            S55            1Y 0O 11  6EDTCDE(4)
+     A                                      DSPATR(&P55)
+     A            S56            1Y 0O 11  8EDTCDE(4)
+     A                                      DSPATR(&P56)
+     A            S57            1Y 0O 11 10EDTCDE(4)
+     A                                      DSPATR(&P57)
+     A            S58            1Y 0O 11 14EDTCDE(4)
+     A                                      DSPATR(&P58)
+     A            S59            1Y 0O 11 16EDTCDE(4)
+     A                                      DSPATR(&P59)
+     A            S60            1Y 0O 11 18EDTCDE(4)
+     A                                      DSPATR(&P60)
+     A            S61            1Y 0O 11 22EDTCDE(4)
+     A                                      DSPATR(&P61)
+     A            S62            1Y 0O 11 24EDTCDE(4)
+     A                                      DSPATR(&P62)
+     A            S63            1Y 0O 11 26EDTCDE(4)
+     A                                      DSPATR(&P63)
+     A            S64            1Y 0O 12  6EDTCDE(4)
+     A                                      DSPATR(&P64)
+     A            S65            1Y 0O 12  8EDTCDE(4)
+     A                                      DSPATR(&P65)
+     A            S66            1Y 0O 12 10EDTCDE(4)
+     A                                      DSPATR(&P66)
+     A            S67            1Y 0O 12 14EDTCDE(4)
+     A                                      DSPATR(&P67)
+     A            S68            1Y 0O 12 16EDTCDE(4)
+     A                                      DSPATR(&P68)
+     A            S69            1Y 0O 12 18EDTCDE(4)
+     A                                      DSPATR(&P69)
+     A            S70            1Y 0O 12 22EDTCDE(4)
+     A                                      DSPATR(&P70)
+     A            S71            1Y 0O 12 24EDTCDE(4)
+     A                                      DSPATR(&P71)
+     A            S72            1Y 0O 12 26EDTCDE(4)
+     A                                      DSPATR(&P72)
+     A            S73            1Y 0O 13  6EDTCDE(4)
+     A                                      DSPATR(&P73)
+     A            S74            1Y 0O 13  8EDTCDE(4)
+     A                                      DSPATR(&P74)
+     A            S75            1Y 0O 13 10EDTCDE(4)
+     A                                      DSPATR(&P75)
+     A            S76            1Y 0O 13 14EDTCDE(4)
+     A                                      DSPATR(&P76)
+     A            S77            1Y 0O 13 16EDTCDE(4)
+     A                                      DSPATR(&P77)
+     A            S78            1Y 0O 13 18EDTCDE(4)
+     A                                      DSPATR(&P78)
+     A            S79            1Y 0O 13 22EDTCDE(4)
+     A                                      DSPATR(&P79)
+     A            S80            1Y 0O 13 24EDTCDE(4)
+     A                                      DSPATR(&P80)
+     A            S81            1Y 0O 13 26EDTCDE(4)
+     A                                      DSPATR(&P81)
+     A                                 16  5'Mode:'
+     A            MODE1         16A  O 16 11COLOR(WHT)
+     A                                 17  5'Invalid attempts:'
+     A            INVA1          9Y 0O 17 23EDTCDE(1)
+     A                                 18  5'Current square  :'
+     A            CUR1           2Y 0O 18 32EDTCDE(4)
+     A                                 19  5'Back corrections:'
+     A            BACK1          9Y 0O 19 23EDTCDE(1)
+     A                                      COLOR(RED)
+     A                                 20  5'Resolution time :'
+     A            TIME1         11   O 20 23COLOR(WHT)
+     A                                 21  2' '
+     A                                 22  2' '
+     A                                 23  2' '
+     A                                 24  2' '
+     A            P01            1A  P
+     A            P02            1A  P
+     A            P03            1A  P
+     A            P04            1A  P
+     A            P05            1A  P
+     A            P06            1A  P
+     A            P07            1A  P
+     A            P08            1A  P
+     A            P09            1A  P
+     A            P10            1A  P
+     A            P11            1A  P
+     A            P12            1A  P
+     A            P13            1A  P
+     A            P14            1A  P
+     A            P15            1A  P
+     A            P16            1A  P
+     A            P17            1A  P
+     A            P18            1A  P
+     A            P19            1A  P
+     A            P20            1A  P
+     A            P21            1A  P
+     A            P22            1A  P
+     A            P23            1A  P
+     A            P24            1A  P
+     A            P25            1A  P
+     A            P26            1A  P
+     A            P27            1A  P
+     A            P28            1A  P
+     A            P29            1A  P
+     A            P30            1A  P
+     A            P31            1A  P
+     A            P32            1A  P
+     A            P33            1A  P
+     A            P34            1A  P
+     A            P35            1A  P
+     A            P36            1A  P
+     A            P37            1A  P
+     A            P38            1A  P
+     A            P39            1A  P
+     A            P40            1A  P
+     A            P41            1A  P
+     A            P42            1A  P
+     A            P43            1A  P
+     A            P44            1A  P
+     A            P45            1A  P
+     A            P46            1A  P
+     A            P47            1A  P
+     A            P48            1A  P
+     A            P49            1A  P
+     A            P50            1A  P
+     A            P51            1A  P
+     A            P52            1A  P
+     A            P53            1A  P
+     A            P54            1A  P
+     A            P55            1A  P
+     A            P56            1A  P
+     A            P57            1A  P
+     A            P58            1A  P
+     A            P59            1A  P
+     A            P60            1A  P
+     A            P61            1A  P
+     A            P62            1A  P
+     A            P63            1A  P
+     A            P64            1A  P
+     A            P65            1A  P
+     A            P66            1A  P
+     A            P67            1A  P
+     A            P68            1A  P
+     A            P69            1A  P
+     A            P70            1A  P
+     A            P71            1A  P
+     A            P72            1A  P
+     A            P73            1A  P
+     A            P74            1A  P
+     A            P75            1A  P
+     A            P76            1A  P
+     A            P77            1A  P
+     A            P78            1A  P
+     A            P79            1A  P
+     A            P80            1A  P
+     A            P81            1A  P
+      *
+     A          R FORM2
+     A*%%TS  SD  20180418  064847  PASCALP     REL-V7R2M0  5770-WDS
+     A                                      OVERLAY
+     A                                      TEXT('DYNAMIC I/O')
+     A                                  8 32'SUDOKU' COLOR(WHT)
+     A                                  2  4']¯¯¯¯¯¯¯]¯¯¯¯¯¯¯]¯¯¯¯¯¯¯]'
+     A                                  3  4']'
+     A                                  3 12']'
+     A                                  3 20']'
+     A                                  3 28']'
+     A                                  4  4']'
+     A                                  4 12']'
+     A                                  4 20']'
+     A                                  4 28']'
+     A                                  5  4']'
+     A                                  5 12']'
+     A                                  5 20']'
+     A                                  5 28']'
+     A                                  6  4']-------+-------+-------]'
+     A                                  7  4']'
+     A                                  7 12']'
+     A                                  7 20']'
+     A                                  7 28']'
+     A                                  8  4']'
+     A                                  8 12']'
+     A                                  8 20']'
+     A                                  8 28']'
+     A                                  9  4']'
+     A                                  9 12']'
+     A                                  9 20']'
+     A                                  9 28']'
+     A                                 10  4']-------+-------+-------]'
+     A                                 11  4']'
+     A                                 11 12']'
+     A                                 11 20']'
+     A                                 11 28']'
+     A                                 12  4']'
+     A                                 12 12']'
+     A                                 12 20']'
+     A                                 12 28']'
+     A                                 13  4']'
+     A                                 13 12']'
+     A                                 13 20']'
+     A                                 13 28']'
+     A                                 14  4']_______]_______]_______]'
+     A            S1             1Y 0O  3  6EDTCDE(4)
+     A                                      DSPATR(&P01)
+     A            S2             1Y 0O  3  8EDTCDE(4)
+     A                                      DSPATR(&P02)
+     A            S3             1Y 0O  3 10EDTCDE(4)
+     A                                      DSPATR(&P03)
+     A            S4             1Y 0O  3 14EDTCDE(4)
+     A                                      DSPATR(&P04)
+     A            S5             1Y 0O  3 16EDTCDE(4)
+     A                                      DSPATR(&P05)
+     A            S6             1Y 0O  3 18EDTCDE(4)
+     A                                      DSPATR(&P06)
+     A            S7             1Y 0O  3 22EDTCDE(4)
+     A                                      DSPATR(&P07)
+     A            S8             1Y 0O  3 24EDTCDE(4)
+     A                                      DSPATR(&P08)
+     A            S9             1Y 0O  3 26EDTCDE(4)
+     A                                      DSPATR(&P09)
+     A            S10            1Y 0O  4  6EDTCDE(4)
+     A                                      DSPATR(&P10)
+     A            S11            1Y 0O  4  8EDTCDE(4)
+     A                                      DSPATR(&P11)
+     A            S12            1Y 0O  4 10EDTCDE(4)
+     A                                      DSPATR(&P12)
+     A            S13            1Y 0O  4 14EDTCDE(4)
+     A                                      DSPATR(&P13)
+     A            S14            1Y 0O  4 16EDTCDE(4)
+     A                                      DSPATR(&P14)
+     A            S15            1Y 0O  4 18EDTCDE(4)
+     A                                      DSPATR(&P15)
+     A            S16            1Y 0O  4 22EDTCDE(4)
+     A                                      DSPATR(&P16)
+     A            S17            1Y 0O  4 24EDTCDE(4)
+     A                                      DSPATR(&P17)
+     A            S18            1Y 0O  4 26EDTCDE(4)
+     A                                      DSPATR(&P18)
+     A            S19            1Y 0O  5  6EDTCDE(4)
+     A                                      DSPATR(&P19)
+     A            S20            1Y 0O  5  8EDTCDE(4)
+     A                                      DSPATR(&P20)
+     A            S21            1Y 0O  5 10EDTCDE(4)
+     A                                      DSPATR(&P21)
+     A            S22            1Y 0O  5 14EDTCDE(4)
+     A                                      DSPATR(&P22)
+     A            S23            1Y 0O  5 16EDTCDE(4)
+     A                                      DSPATR(&P23)
+     A            S24            1Y 0O  5 18EDTCDE(4)
+     A                                      DSPATR(&P24)
+     A            S25            1Y 0O  5 22EDTCDE(4)
+     A                                      DSPATR(&P25)
+     A            S26            1Y 0O  5 24EDTCDE(4)
+     A                                      DSPATR(&P26)
+     A            S27            1Y 0O  5 26EDTCDE(4)
+     A                                      DSPATR(&P27)
+     A            S28            1Y 0O  7  6EDTCDE(4)
+     A                                      DSPATR(&P28)
+     A            S29            1Y 0O  7  8EDTCDE(4)
+     A                                      DSPATR(&P29)
+     A            S30            1Y 0O  7 10EDTCDE(4)
+     A                                      DSPATR(&P30)
+     A            S31            1Y 0O  7 14EDTCDE(4)
+     A                                      DSPATR(&P31)
+     A            S32            1Y 0O  7 16EDTCDE(4)
+     A                                      DSPATR(&P32)
+     A            S33            1Y 0O  7 18EDTCDE(4)
+     A                                      DSPATR(&P33)
+     A            S34            1Y 0O  7 22EDTCDE(4)
+     A                                      DSPATR(&P34)
+     A            S35            1Y 0O  7 24EDTCDE(4)
+     A                                      DSPATR(&P35)
+     A            S36            1Y 0O  7 26EDTCDE(4)
+     A                                      DSPATR(&P36)
+     A            S37            1Y 0O  8  6EDTCDE(4)
+     A                                      DSPATR(&P37)
+     A            S38            1Y 0O  8  8EDTCDE(4)
+     A                                      DSPATR(&P38)
+     A            S39            1Y 0O  8 10EDTCDE(4)
+     A                                      DSPATR(&P39)
+     A            S40            1Y 0O  8 14EDTCDE(4)
+     A                                      DSPATR(&P40)
+     A            S41            1Y 0O  8 16EDTCDE(4)
+     A                                      DSPATR(&P41)
+     A            S42            1Y 0O  8 18EDTCDE(4)
+     A                                      DSPATR(&P42)
+     A            S43            1Y 0O  8 22EDTCDE(4)
+     A                                      DSPATR(&P43)
+     A            S44            1Y 0O  8 24EDTCDE(4)
+     A                                      DSPATR(&P44)
+     A            S45            1Y 0O  8 26EDTCDE(4)
+     A                                      DSPATR(&P45)
+     A            S46            1Y 0O  9  6EDTCDE(4)
+     A                                      DSPATR(&P46)
+     A            S47            1Y 0O  9  8EDTCDE(4)
+     A                                      DSPATR(&P47)
+     A            S48            1Y 0O  9 10EDTCDE(4)
+     A                                      DSPATR(&P48)
+     A            S49            1Y 0O  9 14EDTCDE(4)
+     A                                      DSPATR(&P49)
+     A            S50            1Y 0O  9 16EDTCDE(4)
+     A                                      DSPATR(&P50)
+     A            S51            1Y 0O  9 18EDTCDE(4)
+     A                                      DSPATR(&P51)
+     A            S52            1Y 0O  9 22EDTCDE(4)
+     A                                      DSPATR(&P52)
+     A            S53            1Y 0O  9 24EDTCDE(4)
+     A                                      DSPATR(&P53)
+     A            S54            1Y 0O  9 26EDTCDE(4)
+     A                                      DSPATR(&P54)
+     A            S55            1Y 0O 11  6EDTCDE(4)
+     A                                      DSPATR(&P55)
+     A            S56            1Y 0O 11  8EDTCDE(4)
+     A                                      DSPATR(&P56)
+     A            S57            1Y 0O 11 10EDTCDE(4)
+     A                                      DSPATR(&P57)
+     A            S58            1Y 0O 11 14EDTCDE(4)
+     A                                      DSPATR(&P58)
+     A            S59            1Y 0O 11 16EDTCDE(4)
+     A                                      DSPATR(&P59)
+     A            S60            1Y 0O 11 18EDTCDE(4)
+     A                                      DSPATR(&P60)
+     A            S61            1Y 0O 11 22EDTCDE(4)
+     A                                      DSPATR(&P61)
+     A            S62            1Y 0O 11 24EDTCDE(4)
+     A                                      DSPATR(&P62)
+     A            S63            1Y 0O 11 26EDTCDE(4)
+     A                                      DSPATR(&P63)
+     A            S64            1Y 0O 12  6EDTCDE(4)
+     A                                      DSPATR(&P64)
+     A            S65            1Y 0O 12  8EDTCDE(4)
+     A                                      DSPATR(&P65)
+     A            S66            1Y 0O 12 10EDTCDE(4)
+     A                                      DSPATR(&P66)
+     A            S67            1Y 0O 12 14EDTCDE(4)
+     A                                      DSPATR(&P67)
+     A            S68            1Y 0O 12 16EDTCDE(4)
+     A                                      DSPATR(&P68)
+     A            S69            1Y 0O 12 18EDTCDE(4)
+     A                                      DSPATR(&P69)
+     A            S70            1Y 0O 12 22EDTCDE(4)
+     A                                      DSPATR(&P70)
+     A            S71            1Y 0O 12 24EDTCDE(4)
+     A                                      DSPATR(&P71)
+     A            S72            1Y 0O 12 26EDTCDE(4)
+     A                                      DSPATR(&P72)
+     A            S73            1Y 0O 13  6EDTCDE(4)
+     A                                      DSPATR(&P73)
+     A            S74            1Y 0O 13  8EDTCDE(4)
+     A                                      DSPATR(&P74)
+     A            S75            1Y 0O 13 10EDTCDE(4)
+     A                                      DSPATR(&P75)
+     A            S76            1Y 0O 13 14EDTCDE(4)
+     A                                      DSPATR(&P76)
+     A            S77            1Y 0O 13 16EDTCDE(4)
+     A                                      DSPATR(&P77)
+     A            S78            1Y 0O 13 18EDTCDE(4)
+     A                                      DSPATR(&P78)
+     A            S79            1Y 0O 13 22EDTCDE(4)
+     A                                      DSPATR(&P79)
+     A            S80            1Y 0O 13 24EDTCDE(4)
+     A                                      DSPATR(&P80)
+     A            S81            1Y 0O 13 26EDTCDE(4)
+     A                                      DSPATR(&P81)
+     A                                 16  5'Mode:'
+     A            MODE1         16A  O 16 11COLOR(WHT)
+     A                                 17  5'Invalid attempts:'
+     A            INVA1          9Y 0O 17 23EDTCDE(1)
+     A                                 18  5'Current square  :'
+     A            CUR1           2Y 0O 18 32EDTCDE(4)
+     A                                 19  5'Back corrections:'
+     A            BACK1          9Y 0O 19 23EDTCDE(1)
+     A                                      COLOR(RED)
+     A                                 20  5'Resolution time :'
+     A            TIME1         11   O 20 23COLOR(WHT)
+     A*
+     A                                  2 41']¯¯¯¯¯¯¯]¯¯¯¯¯¯¯]¯¯¯¯¯¯¯]'
+     A                                  3 41']'
+     A                                  3 49']'
+     A                                  3 57']'
+     A                                  3 65']'
+     A                                  4 41']'
+     A                                  4 49']'
+     A                                  4 57']'
+     A                                  4 65']'
+     A                                  5 41']'
+     A                                  5 49']'
+     A                                  5 57']'
+     A                                  5 65']'
+     A                                  6 41']-------+-------+-------]'
+     A                                  7 41']'
+     A                                  7 49']'
+     A                                  7 57']'
+     A                                  7 65']'
+     A                                  8 41']'
+     A                                  8 49']'
+     A                                  8 57']'
+     A                                  8 65']'
+     A                                  9 41']'
+     A                                  9 49']'
+     A                                  9 57']'
+     A                                  9 65']'
+     A                                 10 41']-------+-------+-------]'
+     A                                 11 41']'
+     A                                 11 49']'
+     A                                 11 57']'
+     A                                 11 65']'
+     A                                 12 41']'
+     A                                 12 49']'
+     A                                 12 57']'
+     A                                 12 65']'
+     A                                 13 41']'
+     A                                 13 49']'
+     A                                 13 57']'
+     A                                 13 65']'
+     A                                 14 41']_______]_______]_______]'
+     A            T1             1Y 0O  3 43EDTCDE(4)
+     A                                      DSPATR(&P01)
+     A            T2             1Y 0O  3 45EDTCDE(4)
+     A                                      DSPATR(&P02)
+     A            T3             1Y 0O  3 47EDTCDE(4)
+     A                                      DSPATR(&P03)
+     A            T4             1Y 0O  3 51EDTCDE(4)
+     A                                      DSPATR(&P04)
+     A            T5             1Y 0O  3 53EDTCDE(4)
+     A                                      DSPATR(&P05)
+     A            T6             1Y 0O  3 55EDTCDE(4)
+     A                                      DSPATR(&P06)
+     A            T7             1Y 0O  3 59EDTCDE(4)
+     A                                      DSPATR(&P07)
+     A            T8             1Y 0O  3 61EDTCDE(4)
+     A                                      DSPATR(&P08)
+     A            T9             1Y 0O  3 63EDTCDE(4)
+     A                                      DSPATR(&P09)
+     A            T10            1Y 0O  4 43EDTCDE(4)
+     A                                      DSPATR(&P10)
+     A            T11            1Y 0O  4 45EDTCDE(4)
+     A                                      DSPATR(&P11)
+     A            T12            1Y 0O  4 47EDTCDE(4)
+     A                                      DSPATR(&P12)
+     A            T13            1Y 0O  4 51EDTCDE(4)
+     A                                      DSPATR(&P13)
+     A            T14            1Y 0O  4 53EDTCDE(4)
+     A                                      DSPATR(&P14)
+     A            T15            1Y 0O  4 55EDTCDE(4)
+     A                                      DSPATR(&P15)
+     A            T16            1Y 0O  4 59EDTCDE(4)
+     A                                      DSPATR(&P16)
+     A            T17            1Y 0O  4 61EDTCDE(4)
+     A                                      DSPATR(&P17)
+     A            T18            1Y 0O  4 63EDTCDE(4)
+     A                                      DSPATR(&P18)
+     A            T19            1Y 0O  5 43EDTCDE(4)
+     A                                      DSPATR(&P19)
+     A            T20            1Y 0O  5 45EDTCDE(4)
+     A                                      DSPATR(&P20)
+     A            T21            1Y 0O  5 47EDTCDE(4)
+     A                                      DSPATR(&P21)
+     A            T22            1Y 0O  5 51EDTCDE(4)
+     A                                      DSPATR(&P22)
+     A            T23            1Y 0O  5 53EDTCDE(4)
+     A                                      DSPATR(&P23)
+     A            T24            1Y 0O  5 55EDTCDE(4)
+     A                                      DSPATR(&P24)
+     A            T25            1Y 0O  5 59EDTCDE(4)
+     A                                      DSPATR(&P25)
+     A            T26            1Y 0O  5 61EDTCDE(4)
+     A                                      DSPATR(&P26)
+     A            T27            1Y 0O  5 63EDTCDE(4)
+     A                                      DSPATR(&P27)
+     A            T28            1Y 0O  7 43EDTCDE(4)
+     A                                      DSPATR(&P28)
+     A            T29            1Y 0O  7 45EDTCDE(4)
+     A                                      DSPATR(&P29)
+     A            T30            1Y 0O  7 47EDTCDE(4)
+     A                                      DSPATR(&P30)
+     A            T31            1Y 0O  7 51EDTCDE(4)
+     A                                      DSPATR(&P31)
+     A            T32            1Y 0O  7 53EDTCDE(4)
+     A                                      DSPATR(&P32)
+     A            T33            1Y 0O  7 55EDTCDE(4)
+     A                                      DSPATR(&P33)
+     A            T34            1Y 0O  7 59EDTCDE(4)
+     A                                      DSPATR(&P34)
+     A            T35            1Y 0O  7 61EDTCDE(4)
+     A                                      DSPATR(&P35)
+     A            T36            1Y 0O  7 63EDTCDE(4)
+     A                                      DSPATR(&P36)
+     A            T37            1Y 0O  8 43EDTCDE(4)
+     A                                      DSPATR(&P37)
+     A            T38            1Y 0O  8 45EDTCDE(4)
+     A                                      DSPATR(&P38)
+     A            T39            1Y 0O  8 47EDTCDE(4)
+     A                                      DSPATR(&P39)
+     A            T40            1Y 0O  8 51EDTCDE(4)
+     A                                      DSPATR(&P40)
+     A            T41            1Y 0O  8 53EDTCDE(4)
+     A                                      DSPATR(&P41)
+     A            T42            1Y 0O  8 55EDTCDE(4)
+     A                                      DSPATR(&P42)
+     A            T43            1Y 0O  8 59EDTCDE(4)
+     A                                      DSPATR(&P43)
+     A            T44            1Y 0O  8 61EDTCDE(4)
+     A                                      DSPATR(&P44)
+     A            T45            1Y 0O  8 63EDTCDE(4)
+     A                                      DSPATR(&P45)
+     A            T46            1Y 0O  9 43EDTCDE(4)
+     A                                      DSPATR(&P46)
+     A            T47            1Y 0O  9 45EDTCDE(4)
+     A                                      DSPATR(&P47)
+     A            T48            1Y 0O  9 47EDTCDE(4)
+     A                                      DSPATR(&P48)
+     A            T49            1Y 0O  9 51EDTCDE(4)
+     A                                      DSPATR(&P49)
+     A            T50            1Y 0O  9 53EDTCDE(4)
+     A                                      DSPATR(&P50)
+     A            T51            1Y 0O  9 55EDTCDE(4)
+     A                                      DSPATR(&P51)
+     A            T52            1Y 0O  9 59EDTCDE(4)
+     A                                      DSPATR(&P52)
+     A            T53            1Y 0O  9 61EDTCDE(4)
+     A                                      DSPATR(&P53)
+     A            T54            1Y 0O  9 63EDTCDE(4)
+     A                                      DSPATR(&P54)
+     A            T55            1Y 0O 11 43EDTCDE(4)
+     A                                      DSPATR(&P55)
+     A            T56            1Y 0O 11 45EDTCDE(4)
+     A                                      DSPATR(&P56)
+     A            T57            1Y 0O 11 47EDTCDE(4)
+     A                                      DSPATR(&P57)
+     A            T58            1Y 0O 11 51EDTCDE(4)
+     A                                      DSPATR(&P58)
+     A            T59            1Y 0O 11 53EDTCDE(4)
+     A                                      DSPATR(&P59)
+     A            T60            1Y 0O 11 55EDTCDE(4)
+     A                                      DSPATR(&P60)
+     A            T61            1Y 0O 11 59EDTCDE(4)
+     A                                      DSPATR(&P61)
+     A            T62            1Y 0O 11 61EDTCDE(4)
+     A                                      DSPATR(&P62)
+     A            T63            1Y 0O 11 63EDTCDE(4)
+     A                                      DSPATR(&P63)
+     A            T64            1Y 0O 12 43EDTCDE(4)
+     A                                      DSPATR(&P64)
+     A            T65            1Y 0O 12 45EDTCDE(4)
+     A                                      DSPATR(&P65)
+     A            T66            1Y 0O 12 47EDTCDE(4)
+     A                                      DSPATR(&P66)
+     A            T67            1Y 0O 12 51EDTCDE(4)
+     A                                      DSPATR(&P67)
+     A            T68            1Y 0O 12 53EDTCDE(4)
+     A                                      DSPATR(&P68)
+     A            T69            1Y 0O 12 55EDTCDE(4)
+     A                                      DSPATR(&P69)
+     A            T70            1Y 0O 12 59EDTCDE(4)
+     A                                      DSPATR(&P70)
+     A            T71            1Y 0O 12 61EDTCDE(4)
+     A                                      DSPATR(&P71)
+     A            T72            1Y 0O 12 63EDTCDE(4)
+     A                                      DSPATR(&P72)
+     A            T73            1Y 0O 13 43EDTCDE(4)
+     A                                      DSPATR(&P73)
+     A            T74            1Y 0O 13 45EDTCDE(4)
+     A                                      DSPATR(&P74)
+     A            T75            1Y 0O 13 47EDTCDE(4)
+     A                                      DSPATR(&P75)
+     A            T76            1Y 0O 13 51EDTCDE(4)
+     A                                      DSPATR(&P76)
+     A            T77            1Y 0O 13 53EDTCDE(4)
+     A                                      DSPATR(&P77)
+     A            T78            1Y 0O 13 55EDTCDE(4)
+     A                                      DSPATR(&P78)
+     A            T79            1Y 0O 13 59EDTCDE(4)
+     A                                      DSPATR(&P79)
+     A            T80            1Y 0O 13 61EDTCDE(4)
+     A                                      DSPATR(&P80)
+     A            T81            1Y 0O 13 63EDTCDE(4)
+     A                                      DSPATR(&P81)
+     A                                 16 42'Mode:'
+     A            MODE2         16A  O 16 48COLOR(WHT)
+     A                                 17 42'Invalid attempts:'
+     A            INVA2          9Y 0O 17 60EDTCDE(1)
+     A                                 18 42'Current square  :'
+     A            CUR2           2Y 0O 18 69EDTCDE(4)
+     A                                 19 42'Back corrections:'
+     A            BACK2          9Y 0O 19 60EDTCDE(1)
+     A                                      COLOR(RED)
+     A                                 20 42'Resolution time :'
+     A            TIME2         11   O 20 60COLOR(WHT)
+     A            P01            1A  P
+     A            P02            1A  P
+     A            P03            1A  P
+     A            P04            1A  P
+     A            P05            1A  P
+     A            P06            1A  P
+     A            P07            1A  P
+     A            P08            1A  P
+     A            P09            1A  P
+     A            P10            1A  P
+     A            P11            1A  P
+     A            P12            1A  P
+     A            P13            1A  P
+     A            P14            1A  P
+     A            P15            1A  P
+     A            P16            1A  P
+     A            P17            1A  P
+     A            P18            1A  P
+     A            P19            1A  P
+     A            P20            1A  P
+     A            P21            1A  P
+     A            P22            1A  P
+     A            P23            1A  P
+     A            P24            1A  P
+     A            P25            1A  P
+     A            P26            1A  P
+     A            P27            1A  P
+     A            P28            1A  P
+     A            P29            1A  P
+     A            P30            1A  P
+     A            P31            1A  P
+     A            P32            1A  P
+     A            P33            1A  P
+     A            P34            1A  P
+     A            P35            1A  P
+     A            P36            1A  P
+     A            P37            1A  P
+     A            P38            1A  P
+     A            P39            1A  P
+     A            P40            1A  P
+     A            P41            1A  P
+     A            P42            1A  P
+     A            P43            1A  P
+     A            P44            1A  P
+     A            P45            1A  P
+     A            P46            1A  P
+     A            P47            1A  P
+     A            P48            1A  P
+     A            P49            1A  P
+     A            P50            1A  P
+     A            P51            1A  P
+     A            P52            1A  P
+     A            P53            1A  P
+     A            P54            1A  P
+     A            P55            1A  P
+     A            P56            1A  P
+     A            P57            1A  P
+     A            P58            1A  P
+     A            P59            1A  P
+     A            P60            1A  P
+     A            P61            1A  P
+     A            P62            1A  P
+     A            P63            1A  P
+     A            P64            1A  P
+     A            P65            1A  P
+     A            P66            1A  P
+     A            P67            1A  P
+     A            P68            1A  P
+     A            P69            1A  P
+     A            P70            1A  P
+     A            P71            1A  P
+     A            P72            1A  P
+     A            P73            1A  P
+     A            P74            1A  P
+     A            P75            1A  P
+     A            P76            1A  P
+     A            P77            1A  P
+     A            P78            1A  P
+     A            P79            1A  P
+     A            P80            1A  P
+     A            P81            1A  P
+      *
+     A          R DUMMY1
+     A                                      TEXT('PREVENTS PREVIOUS SCREEN FROM-
+     A                                       BEING CLEARED')
+     A                                      ASSUME
+     A                                  1  9' ' 
