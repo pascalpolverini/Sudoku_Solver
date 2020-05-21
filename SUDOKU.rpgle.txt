@@ -1,6 +1,6 @@
         //                                                                                          
         //   Sudoku Solver                                                                          
-        //   Author: Pascal Polverini - Fresche Solutions                                           
+        //   Author: Pascal Polverini                                           
         //                                                                                          
                                                                                                     
         // Compilation:                                                                             
